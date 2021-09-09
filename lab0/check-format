@@ -1,0 +1,81 @@
+#! /usr/bin/perl
+
+use v5.16;
+use utf8;
+use open qw(:std :utf8);
+
+sub check_ascii {
+    my $found_nonascii = 0;
+
+    my $errmsg = <<'EOF';
+ERROR: Your code contains non-ASCII characters!
+    Please remove these characters before continuing.
+    You must fix this before submitting to Autolab.
+    Locations of non-ASCII characters are (file:line):
+EOF
+
+    for my $file (@_) {
+        open my $fh, '<:raw', $_[0];
+        while (my $line = <$fh>) {
+            if ($line =~ /[\x00-\x08\x0E-\x1F\x80-\xFF]/) {
+                if (!$found_nonascii) {
+                    $found_nonascii = 1;
+                    print {*STDERR} $errmsg;
+                }
+                print {*STDERR} "$file:$.\n";
+            }
+        }
+        close $fh;
+    }
+    print {*STDERR} "\n" if $found_nonascii;
+    return $found_nonascii;
+}
+
+sub check_format {
+    my $format_problems = 0;
+    my $errmsg = <<'EOF';
+ERROR: Your code's formatting does not match clang-format.
+    For details, see https://www.cs.cmu.edu/~213/codeStyle.html
+    To reformat your code, run "make format".
+    You must fix this before submitting to Autolab.
+    Files needing reformatting:
+EOF
+    my $clang_format = $ENV{CLANG_FORMAT} // 'clang-format';
+
+    for my $file (@_) {
+        my ($unformatted, $formatted);
+        do {
+            open my $fh, '<', $file;
+            local $/ = undef;
+            $unformatted = <$fh>;
+            close $fh;
+        };
+        do {
+            open my $pipe, '-|', $clang_format, '-style=file', $file;
+            local $/ = undef;
+            $formatted = <$pipe>;
+            close $pipe or die "$0: problem running $clang_format: exit $?\n";
+        };
+        if ($formatted ne $unformatted) {
+            if (!$format_problems) {
+                $format_problems = 1;
+                print {*STDERR} $errmsg;
+            }
+            print {*STDERR} "$file\n";
+        }
+    }
+    print {*STDERR} "\n" if $format_problems;
+    return $format_problems;
+}
+
+my $status = 0;
+$status |= check_ascii(@ARGV);
+$status |= check_format(@ARGV);
+if ($status == 0) {
+    exit 0;
+} elsif ($ENV{FORCE_FORMAT} // 0) {
+    sleep 1;
+    exit 0;
+} else {
+    exit $status;
+}
