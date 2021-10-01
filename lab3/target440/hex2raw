@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+
+"""
+This program converts hex-encoded bytes into raw bytes, or "binary form".
+
+For example, the character "a" is represented by 0x61 in ASCII, so to output
+that raw byte, you would input "61" to this program.
+
+---
+
+Sample usage:
+    $ echo '61 62 63' | ./hex2raw
+    $ ./hex2raw < sample.txt > sample.bin
+    $ ./hex2raw sample.txt sample.bin
+
+This program provides the same functionality as "xxd -r -p", but it also
+supports comments. To perform the inverse operation (displaying a binary
+file as hex), use "xxd", with the "-p" flag for plain output.
+
+Authors:
+    Kevin Geng (khg), February 2020
+"""
+
+import argparse
+import binascii
+import os
+import re
+import sys
+import signal
+
+
+def convert_hex_string(text):
+    # Remove all comments in the text: /* */, //, and #
+    # Note: this needs to be in one regex for correctness
+    text = re.sub(r'(/\*[\s\S]*?\*/)|(//.*$)|(#.*$)', '', text, flags=re.M)
+
+    # Search for invalid characters (not hex or whitespace)
+    matches = re.findall(r'[^\s0-9a-fA-F]+', text)
+    if matches:
+        print('ERROR: invalid characters in input:', file=sys.stderr)
+        print(', '.join(map(repr, matches)), file=sys.stderr)
+        print('Please use only hex characters: 0-9 and a-f.', file=sys.stderr)
+        exit(1)
+
+    # Remove all whitespace
+    text = re.sub(r'\s+', '', text)
+
+    # Make sure length is correct
+    if len(text) % 2 != 0:
+        print('ERROR: input length is odd.', file=sys.stderr)
+        print('Make sure each byte is represented by two hex characters.',
+              file=sys.stderr)
+        exit(1)
+
+    # Use binascii to convert and catch any errors
+    try:
+        result = binascii.unhexlify(text)
+    except binascii.Error as e:
+        print("ERROR: couldn't parse hex: {}".format(e), file=sys.stderr)
+        exit(1)
+
+    return result
+
+
+def main():
+    # Be a good Unix citizen by allowing this process to be killed silently
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    # Parse command-line arguments
+    docs = __doc__.split('---', 2)
+    parser = argparse.ArgumentParser(
+        description=docs[0],
+        epilog=docs[1],
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+   # 'Convert hex-encoded bytes into raw bytes.')
+    parser.add_argument('INFILE',
+                        nargs='?',
+                        type=argparse.FileType('r'),
+                        default='-',
+                        help='input file to read from '
+                             '(or - for standard input)')
+    parser.add_argument('OUTFILE',
+                        nargs='?',
+                        type=argparse.FileType('wb'),
+                        default='-',
+                        help='output file to write to '
+                             '(or - for standard output)')
+    args = parser.parse_args()
+
+    # Print a warning if invoked with no arguments
+    if args.INFILE == sys.stdin and os.isatty(sys.stdin.fileno()):
+        print('Reading from standard input. '
+              'For help, run \'{} --help\'.'.format(sys.argv[0]),
+              file=sys.stderr)
+
+    # Make sure we write to stdout as binary, not text
+    if args.OUTFILE == sys.stdout:
+        args.OUTFILE = sys.stdout.buffer
+
+    text = args.INFILE.read()
+    args.INFILE.close()
+
+    result = convert_hex_string(text)
+
+    args.OUTFILE.write(result)
+    args.OUTFILE.close()
+
+
+if __name__ == '__main__':
+    main()
