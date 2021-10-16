@@ -142,6 +142,7 @@ void cacheSimulator(cache_input *input, csim_stats_t *state) {
     char *action, *address;
     int bsize;
     unsigned long addr, tag, set;
+    unsigned long dirtyBytes = 1 << input->b;
 
     while (fgets(buffer, BUF_SIZE, traceFile)) {
         action = strtok(buffer, delimiters);
@@ -149,7 +150,7 @@ void cacheSimulator(cache_input *input, csim_stats_t *state) {
         bsize = atoi(strtok(NULL, delimiters));
         // verbose mode
         if (input->v)
-            printf("%s %s,%d ", action, address, bsize);
+            printf("%s %s,%d\n ", action, address, bsize);
         // new incoming address from file
         addr = strtoul(address, NULL, 16);
         tag = addr >> (input->s + input->b);
@@ -167,9 +168,9 @@ void cacheSimulator(cache_input *input, csim_stats_t *state) {
                 state->hits++;
                 hit_flag = 1;
 
-                if (strncmp(action, "S", 1) &&
+                if (!strncmp(action, "S", 1) &&
                     !cache[set * input->E + i].dirty) {
-                    state->dirty_bytes++;
+                    state->dirty_bytes += dirtyBytes;
                     cache[set * input->E + i].dirty = 1;
                     if (input->v)
                         printf("dirty\n");
@@ -199,9 +200,9 @@ void cacheSimulator(cache_input *input, csim_stats_t *state) {
                 printf("miss:cold\n");
             state->misses++;
             // dirty record
-            if (strncmp(action, "S", 1)) {
+            if (!strncmp(action, "S", 1)) {
                 cache[set * input->E + invalid_index].dirty = 1;
-                state->dirty_bytes++;
+                state->dirty_bytes += dirtyBytes;
                 if (input->v)
                     printf("dirty\n");
             }
@@ -216,15 +217,15 @@ void cacheSimulator(cache_input *input, csim_stats_t *state) {
             state->evictions++;
             // dirty and evictions record
             if (cache[set * input->E + LRU_index].dirty) {
-                state->dirty_bytes--;
-                state->dirty_evictions++;
+                state->dirty_bytes -= dirtyBytes;
+                state->dirty_evictions += dirtyBytes;
                 cache[set * input->E + LRU_index].dirty = 0;
                 if (input->v)
                     printf("dirty eviciton\n");
             }
-            if (strncmp(action, "S", 1) &&
+            if (!strncmp(action, "S", 1) &&
                 !cache[set * input->E + LRU_index].dirty) {
-                state->dirty_bytes++;
+                state->dirty_bytes += dirtyBytes;
                 cache[set * input->E + LRU_index].dirty = 1;
                 if (input->v)
                     printf("dirty\n");
