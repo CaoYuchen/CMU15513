@@ -1,0 +1,82 @@
+#
+# trace31.txt - I/O redirection (input and output, different order,
+# permissions)
+#
+/bin/echo -e tsh\076 /bin/cp testprogs/mycat.c runtrace.tmp/mycat.c
+NEXT
+/bin/cp testprogs/mycat.c runtrace.tmp/mycat.c
+NEXT
+
+/bin/echo -e tsh\076 /bin/chmod 444 runtrace.tmp/mycat.c
+NEXT
+/bin/chmod 444 runtrace.tmp/mycat.c
+NEXT
+
+/bin/echo -e tsh\076 /bin/echo "Test" \076 runtrace.tmp/mytiger.c
+NEXT
+/bin/echo "Test" > runtrace.tmp/mytiger.c
+NEXT
+
+/bin/echo -e tsh\076 /bin/chmod -r runtrace.tmp/mytiger.c
+NEXT
+/bin/chmod -r runtrace.tmp/mytiger.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \076 runtrace.tmp/mytiger.c \074 runtrace.tmp/mycat.c
+NEXT
+testprogs/mycat > runtrace.tmp/mytiger.c < runtrace.tmp/mycat.c
+NEXT
+
+/bin/echo -e tsh\076 /bin/chmod +r runtrace.tmp/mytiger.c
+NEXT
+/bin/chmod +r runtrace.tmp/mytiger.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mytiger.c
+NEXT
+testprogs/mycat < runtrace.tmp/mytiger.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/myspin1 \046
+NEXT
+testprogs/myspin1 &
+NEXT
+
+WAIT
+
+/bin/echo -e tsh\076 jobs \076 /dev/null
+NEXT
+jobs > /dev/null
+NEXT
+
+/bin/echo -e tsh\076 /bin/echo "Test" \076 runtrace.tmp/jobs.txt
+NEXT
+/bin/echo "Test" > runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 /bin/chmod -r runtrace.tmp/jobs.txt
+NEXT
+/bin/chmod -r runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 jobs \076 runtrace.tmp/jobs.txt
+NEXT
+jobs > runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 /bin/chmod +r runtrace.tmp/jobs.txt
+NEXT
+/bin/chmod +r runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/jobs.txt
+NEXT
+testprogs/mycat < runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/thisfileshouldntexist.txt
+NEXT
+testprogs/mycat < runtrace.tmp/thisfileshouldntexist.txt
+NEXT
+
+quit

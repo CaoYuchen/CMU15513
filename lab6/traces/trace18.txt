@@ -1,0 +1,17 @@
+#
+# trace18.txt - Forward SIGTSTP to every process in foreground process group
+#
+/bin/echo -e tsh\076 testprogs/mysplit 10
+NEXT
+testprogs/mysplit 10
+WAIT
+
+SIGTSTP
+NEXT
+
+/bin/echo -e tsh\076 /bin/sh -c \047/bin/ps h p `pgrep -s 0`| /bin/fgrep -v grep | /bin/fgrep mysplit | /usr/bin/expand | testprogs/ps-clean.awk\047
+NEXT
+/bin/sh -c '/bin/ps h p `pgrep -s 0`| /bin/fgrep -v grep | /bin/fgrep mysplit | /usr/bin/expand | awk -f testprogs/ps-clean.awk'
+NEXT
+
+quit

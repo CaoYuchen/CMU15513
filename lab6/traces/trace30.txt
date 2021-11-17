@@ -1,0 +1,85 @@
+#
+# trace30.txt - I/O redirection (input and output)
+#
+
+/bin/echo -e tsh\076 /bin/cp testprogs/mycat.c runtrace.tmp/mycat.c
+NEXT
+/bin/cp testprogs/mycat.c runtrace.tmp/mycat.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mycat.c \076 runtrace.tmp/mylion.c
+NEXT
+testprogs/mycat < runtrace.tmp/mycat.c > runtrace.tmp/mylion.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mylion.c
+NEXT
+testprogs/mycat < runtrace.tmp/mylion.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mycat.c
+NEXT
+testprogs/mycat < runtrace.tmp/mycat.c
+NEXT
+
+/bin/echo -e tsh\076 /bin/echo test \076 runtrace.tmp/mycat.c
+NEXT
+/bin/echo test > runtrace.tmp/mycat.c
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mycat.c
+NEXT
+testprogs/mycat < runtrace.tmp/mycat.c
+NEXT
+
+
+# Test jobs command
+
+/bin/echo -e tsh\076 /bin/cp runtrace.tmp/mylion.c runtrace.tmp/jobs.txt
+NEXT
+/bin/cp runtrace.tmp/mylion.c runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 testprogs/myspin1 \046
+NEXT
+testprogs/myspin1 &
+NEXT
+
+WAIT
+
+/bin/echo -e tsh\076 jobs \076 runtrace.tmp/jobs.txt
+NEXT
+jobs > runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/jobs.txt
+NEXT
+testprogs/mycat < runtrace.tmp/jobs.txt
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+/bin/echo -e tsh\076 /bin/sh -c '\047ls -l runtrace.tmp/ | awk "NF >= 9 {print \$1 \" \" \$2 \" \" \$3 \" \" \$4 \" \" \$9}"\047'
+NEXT
+/bin/sh -c 'ls -l runtrace.tmp/ | awk "NF >= 9 {print \$1 \" \" \$2 \" \" \$3 \" \" \$4 \" \" \$9}"'
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mylion.c \076 runtrace.tmp/mybglion.c \046
+NEXT
+testprogs/mycat < runtrace.tmp/mylion.c > runtrace.tmp/mybglion.c &
+NEXT
+
+/bin/echo -e tsh\076 /bin/sh -c "while ps rp `pgrep -s 0` \076 /dev/null ; do testprogs/myusleep 1000; done"
+NEXT
+/bin/sh -c "while ps rp `pgrep -s 0` > /dev/null ; do testprogs/myusleep 1000; done"
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/mybglion.c
+NEXT
+testprogs/mycat < runtrace.tmp/mybglion.c
+NEXT
+
+quit

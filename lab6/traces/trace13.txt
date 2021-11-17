@@ -1,0 +1,26 @@
+#
+# trace13.txt - Child sends SIGTSTP to itself
+#
+/bin/echo -e tsh\076 testprogs/mytstps
+NEXT
+testprogs/mytstps
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+/bin/echo -e tsh\076 testprogs/myspinandtstps 10 \046
+NEXT
+testprogs/myspinandtstps 10 &
+NEXT
+
+/bin/echo -e tsh\076 /bin/sh -c "while ps rp `pgrep -s 0` \076 /dev/null ; do testprogs/myusleep 1000; done"
+NEXT
+/bin/sh -c "while ps rp `pgrep -s 0` > /dev/null ; do testprogs/myusleep 1000; done"
+WAIT
+SIGNAL
+NEXT
+
+quit

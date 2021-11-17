@@ -1,0 +1,23 @@
+#
+# trace11.txt - Send fatal SIGTERM (15) to a background job.
+#
+/bin/echo -e tsh\076 testprogs/myspin1 5 \046
+NEXT
+testprogs/myspin1 5 &
+NEXT
+
+WAIT
+
+/bin/echo -e tsh\076 /usr/bin/pkill -s 0 myspin1
+NEXT
+/usr/bin/pkill -s 0 myspin1
+# -s 0 prevents interference between concurrent runtrace
+NEXT
+
+SIGNAL
+SIGNAL
+WAIT
+testprogs/myusleep 500
+NEXT
+
+quit

@@ -1,0 +1,35 @@
+#
+# trace23.txt - Process bg builtin command (two jobs)
+#
+
+/bin/echo -e tsh\076 testprogs/myspin1 10 \046
+NEXT
+testprogs/myspin1 10 &
+NEXT
+WAIT
+
+/bin/echo -e tsh\076 testprogs/mytstpp
+NEXT
+testprogs/mytstpp
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+
+/bin/echo -e tsh\076 bg (pid of mytstpp)
+NEXT
+# This command executes bg with the pid of mytstpp.
+PID mytstpp bg
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+SIGNAL
+
+quit

@@ -1,0 +1,31 @@
+#
+# trace19.txt - Exit the child in the middle of sigint/sigtsp handler
+#
+SHELLSYNC kill
+
+/bin/echo -e tsh\076 testprogs/myspin2
+NEXT
+
+testprogs/myspin2
+
+WAIT
+SIGTSTP
+SHELLWAIT
+SIGNAL
+SHELLSIGNAL
+
+NEXT
+
+/bin/echo -e tsh\076 testprogs/myspin2
+NEXT
+testprogs/myspin2
+
+WAIT
+SIGINT
+SHELLWAIT
+SIGNAL
+SHELLSIGNAL
+
+NEXT
+
+quit

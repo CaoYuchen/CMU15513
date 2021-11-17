@@ -1,0 +1,28 @@
+#
+# trace21.txt - Forward signal to process with surprising signal handlers.
+#
+/bin/echo -e tsh\076 testprogs/mysigfun 10
+NEXT
+testprogs/mysigfun 10
+WAIT
+SIGTSTP
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mysigfun 10
+NEXT
+testprogs/mysigfun 10
+WAIT
+SIGINT
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+quit

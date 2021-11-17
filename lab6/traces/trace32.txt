@@ -1,0 +1,46 @@
+#
+# trace32.txt - Error handling
+#
+
+# Try to execute non-existent command
+/bin/echo -e tsh\076 runtrace.tmp/idontexist
+NEXT
+runtrace.tmp/idontexist
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/idontexist
+NEXT
+testprogs/mycat < runtrace.tmp/idontexist
+NEXT
+
+/bin/echo -e tsh\076 /bin/touch runtrace.tmp/badpermissions
+NEXT
+/bin/touch runtrace.tmp/badpermissions
+NEXT
+
+/bin/echo -e tsh\076 /bin/chmod 000 runtrace.tmp/badpermissions
+NEXT
+/bin/chmod 000 runtrace.tmp/badpermissions
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/badpermissions
+NEXT
+testprogs/mycat < runtrace.tmp/badpermissions
+NEXT
+
+/bin/echo -e tsh\076 jobs \076 runtrace.tmp/badpermissions
+NEXT
+jobs > runtrace.tmp/badpermissions
+NEXT
+
+/bin/echo -e tsh\076 /bin/echo "Test" \076 runtrace.tmp/badpermissions
+NEXT
+/bin/echo "Test" > runtrace.tmp/badpermissions
+NEXT
+
+/bin/echo -e tsh\076 runtrace.tmp/badpermissions
+NEXT
+runtrace.tmp/badpermissions
+NEXT
+
+quit

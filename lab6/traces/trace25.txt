@@ -1,0 +1,124 @@
+#
+# trace25.txt - Process fg/bg builtin command (many jobs, with PID and JID, test error message)
+#
+/bin/echo -e tsh\076 testprogs/myspin1 10 \046
+NEXT
+testprogs/myspin1 10 &
+WAIT
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mytstps
+NEXT
+testprogs/mytstps
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+/bin/echo -e tsh\076 fg (PID of mytstps)
+NEXT
+PID mytstps fg
+NEXT
+
+# create a lot of jobs
+/bin/echo -e tsh\076 testprogs/myspin1 19 \046
+NEXT
+testprogs/myspin1 19 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 18 \046
+NEXT
+testprogs/myspin1 18 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 17 \046
+NEXT
+testprogs/myspin1 17 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 16 \046
+NEXT
+testprogs/myspin1 16 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 15 \046
+NEXT
+testprogs/myspin1 15 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 14 \046
+NEXT
+testprogs/myspin1 14 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 13 \046
+NEXT
+testprogs/myspin1 13 &
+WAIT
+NEXT
+/bin/echo -e tsh\076 testprogs/myspin1 12 \046
+NEXT
+testprogs/myspin1 12 &
+WAIT
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mytstps
+NEXT
+testprogs/mytstps
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+/bin/echo -e tsh\076 fg %10
+NEXT
+fg %10
+NEXT
+
+/bin/echo -e tsh\076 fg %42
+NEXT
+fg %42
+NEXT
+
+/bin/echo -e tsh\076 fg
+NEXT
+fg
+NEXT
+
+/bin/echo -e tsh\076 fg blah
+NEXT
+fg blah
+NEXT
+
+/bin/echo -e tsh\076 bg %42
+NEXT
+bg %42
+NEXT
+
+/bin/echo -e tsh\076 bg
+NEXT
+bg
+NEXT
+
+/bin/echo -e tsh\076 bg blah
+NEXT
+bg blah
+NEXT
+
+SIGNAL # restart myspin
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+SIGNAL
+
+quit

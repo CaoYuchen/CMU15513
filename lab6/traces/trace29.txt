@@ -1,0 +1,14 @@
+#
+# trace29.txt - I/O redirection (output)
+#
+/bin/echo -e tsh\076 /bin/echo "Hello, World!" \076 runtrace.tmp/hello.txt
+NEXT
+/bin/echo "Hello, World!" > runtrace.tmp/hello.txt
+NEXT
+
+/bin/echo -e tsh\076 testprogs/mycat \074 runtrace.tmp/hello.txt
+NEXT
+testprogs/mycat < runtrace.tmp/hello.txt
+NEXT
+
+quit

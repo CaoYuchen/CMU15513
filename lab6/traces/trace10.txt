@@ -1,0 +1,14 @@
+#
+# trace10.txt - Send SIGTSTP to foreground job.
+#
+/bin/echo -e tsh\076 testprogs/mytstpp useless arguments
+NEXT
+testprogs/mytstpp useless arguments
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+quit

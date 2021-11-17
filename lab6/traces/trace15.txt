@@ -1,0 +1,27 @@
+#
+# trace15.txt - Forward SIGINT to foreground job only.
+#
+
+# Test what happens with no foreground job
+SIGINT
+
+/bin/echo -e tsh\076 testprogs/myspin1 5 \046
+NEXT
+testprogs/myspin1 5 &
+NEXT
+
+WAIT
+
+/bin/echo -e tsh\076 testprogs/myintp
+NEXT
+testprogs/myintp
+NEXT
+
+/bin/echo -e tsh\076 jobs
+NEXT
+jobs
+NEXT
+
+SIGNAL
+
+quit

@@ -1,0 +1,17 @@
+#
+# trace17.txt - Forward SIGINT to every process in foreground process group
+#
+/bin/echo -e tsh\076 testprogs/mysplit 10
+NEXT
+testprogs/mysplit 10
+WAIT
+
+SIGINT
+NEXT
+
+/bin/echo -e tsh\076 /usr/bin/pgrep -s 0 mysplit
+NEXT
+/usr/bin/pgrep -s 0 mysplit
+NEXT
+
+quit
