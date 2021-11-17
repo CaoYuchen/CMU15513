@@ -50,3 +50,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+*.tar
+/lab5/traces
+/lab6/traces
+/lab6/testprogs
